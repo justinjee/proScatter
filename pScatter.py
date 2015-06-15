@@ -25,7 +25,7 @@ args = []
 args2 = sys.argv[:]
 zoom=False
 xkcd=False
-scale=False #sets default to scaling based on aa only
+scale=True #sets default to scaling based on aa only
 for i in range(len(args2)):
     a = args2[i]
     if '--zoom' in a:
@@ -33,8 +33,8 @@ for i in range(len(args2)):
         (z,zkey)=a.split('=')
     elif '--xkcd' in a:
         xkcd=True
-    elif '--fullscale' in a:
-        scale=True
+    elif '--scale' in a:
+        scale=False
     else:
         args.append(a)
 
