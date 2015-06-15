@@ -4,6 +4,8 @@
 
 by Justin Jee, with design by Katelyn McGary Shipper
 
+![pScatter plot of interacting proteins](test.png "pScatter Example")
+
 *Dependencies*
 
 pScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), and the visualization library [matplotlib](http://matplotlib.org/)
