@@ -22,11 +22,19 @@ The outputs include:
 2.   A scatter plot
 
 *Example*
+
 python pScatter.py test.fasta K EXP1 EXP2 testout
 
 *Features*
---fullscale
+
+--scale
+
+Scales both plot and output so that only the amino acids of interest are considered.
 
 --zoom=Prot1-Prot2
 
+Zooms in on only one subplot (Prot1 vs Prot2). As an added feature, clicking on any point in the scatter plot will print the coordinates of that point in the console.
+
 --xkcd
+
+Because why not.
