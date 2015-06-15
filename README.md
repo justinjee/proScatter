@@ -31,16 +31,22 @@ The outputs include:
 
 python pScatter.py test.fasta K EXP1 EXP2 testout
 
-*Features*
+##Features
 
---scale
+pScatter enables multiple features, for example:
+
+python pScatter.py test.fasta K EXP1 EXP2 testout --scale --zoom=Prot1-Prot2
+
+Details are given below:
+
+*--scale*
 
 Scales both plot and output so that only the amino acids of interest are considered. Axes are in units of amino acids of interest (ex: 1st lysine, 2nd lysine, etc)
 
---zoom=Prot1-Prot2
+*--zoom=Prot1-Prot2*
 
 Zooms in on only one subplot (Prot1 vs Prot2). As an added feature, clicking on any point in the scatter plot will print the coordinates of that point in the console.
 
---xkcd
+*--xkcd*
 
 Because why not.
