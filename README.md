@@ -4,7 +4,7 @@
 
 by Justin Jee, with design by Katelyn McGary Shipper
 
-![pScatter plot of interacting proteins](test.png =250x)
+<img src="test.png" width="48">
 
 *Dependencies*
 
