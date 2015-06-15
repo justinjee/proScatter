@@ -4,19 +4,22 @@
 
 by Justin Jee, with design by Katelyn McGary Shipper
 
-<img src="test.png" width="480" align="middle">
-
 *Dependencies*
 
 pScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), and the visualization library [matplotlib](http://matplotlib.org/)
 
 *Basic Use*
 
+To download, either download all 3 .py files into the same directory, or download the zipped folder (see button on the bottom right) 
+
 The inputs to pScatter include:
 
-1.   A fasta file including the amino acid sequences of all the proteins under consideration
+1.   A fasta file including the amino acid sequences of all the proteins under consideration.
 2.   A list of amino acids of interest (ex: K or CM)
-3.   One or more directories containing pLink files (in .txt format) with crosslink information (of the form ProteinA(position1)-ProteinB(position2))
+3.   Up to three directories containing pLink files (in .txt format) with crosslink information (of the form ProteinA(position1)-ProteinB(position2))
+Note: If converting from excel to .txt files, it is important to save it in WINDOWS TXT FORMAT. Even if you are on Mac. 
+The exact features the program looks for in a given line are in the conditional "if ('Spectrum' in line) and ')-' in line and not ('REVERSE' in line):"
+You can modify this in loadfiles.py if your file looks different.
 
 The outputs include:
 
@@ -31,7 +34,7 @@ python pScatter.py test.fasta K EXP1 EXP2 testout
 
 --scale
 
-Scales both plot and output so that only the amino acids of interest are considered.
+Scales both plot and output so that only the amino acids of interest are considered. Axes are in units of amino acids of interest (ex: 1st lysine, 2nd lysine, etc)
 
 --zoom=Prot1-Prot2
 

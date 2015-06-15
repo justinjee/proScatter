@@ -97,5 +97,6 @@ def onpick(event):
 plt.tight_layout(pad=1, w_pad=0, h_pad=0)
 f.savefig(output+'.png')
 if zoom:
+    print "Click features enabled."
     f.canvas.mpl_connect('pick_event', onpick)
 plt.show()
