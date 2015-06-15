@@ -17,6 +17,7 @@ The inputs to pScatter include:
 1.   A fasta file including the amino acid sequences of all the proteins under consideration.
 2.   A list of amino acids of interest (ex: K or CM)
 3.   Up to three directories containing pLink files (in .txt format) with crosslink information (of the form ProteinA(position1)-ProteinB(position2))
+
 Note: If converting from excel to .txt files, it is important to save it in WINDOWS TXT FORMAT. Even if you are on Mac. 
 The exact features the program looks for in a given line are in the conditional "if ('Spectrum' in line) and ')-' in line and not ('REVERSE' in line):"
 You can modify this in loadfiles.py if your file looks different.
