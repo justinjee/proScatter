@@ -4,7 +4,7 @@
 
 by Justin Jee, with design by Katelyn McGary Shipper
 
-<img src="test.png" width="480">
+<img src="test.png" width="480" align="middle">
 
 *Dependencies*
 
