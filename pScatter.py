@@ -17,22 +17,19 @@ import splotch
 import sys
 import numpy as np
 from collections import defaultdict
-import matplotlib.pyplot as plt
-from pylab import *
+from bokeh.plotting import figure
+from bokeh.io import gridplot, output_file, show
 
 #handle user options
 args = []
 args2 = sys.argv[:]
 zoom=False
-xkcd=False
 scale=True #sets default to scaling based on aa only
 for i in range(len(args2)):
     a = args2[i]
     if '--zoom' in a:
         zoom=True
         (z,zkey)=a.split('=')
-    elif '--xkcd' in a:
-        xkcd=True
     elif '--scale' in a:
         scale=False
     else:
@@ -56,47 +53,38 @@ for dir in dirs:
 
 ### output ###
 print "generating plot"
-o = open(output+'.txt','w')
 
 #Define basic plot parameters
-if xkcd:
-    plt.xkcd()
-color = ['b','r','g']
-marker = ['o','x','*']
-basesize = 80
+color = ['blue','red','green']
+marker = ['o','x','+']
+basesize = 10 
 buffer=10
 numprot = len(allprot)
 sallprot = sorted(allprot)
+handles = [0]*len(interactions)
 
 #Now do actual plotting
-j=1
+output_file(output+'.html')
 if not zoom:
-  f, ax = plt.subplots(numprot,numprot,sharex=True,sharey=True)
-  for prot1 in sallprot:
-    i=numprot-1
-    for prot2 in sallprot:
-        key = prot1 +'-'+ prot2
-        ax = subplot(numprot,numprot,i*numprot+j)
-        for xind in range(len(interactions)):
-            gg2i=interactions[xind]
-            (x,y,r,mc) = loadfiles.writesummary(o,key,gg2i,prot2map,scale)
-            splotch.splotch(ax,x,y,r,basesize,buffer,mc,key,j==1,i==numprot-1,numprot,color[xind],marker[xind])
-        i-=1
-    j+=1
+  m = [[None for r in range(numprot)] for s in range(numprot)]
+  i=numprot-1
+  for prot2 in sallprot:
+      j=0
+      for prot1 in sallprot:
+          key = prot1 +'-'+ prot2
+          for xind in range(len(interactions)):
+              gg2i=interactions[xind]
+              (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
+              m[i][j]=splotch.splotch(m[i][j],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind])
+          j+=1
+      i-=1
+  p = gridplot(m)
 else:
-    f, ax = plt.subplots(1,1)
+    p = None
     for xind in range(len(interactions)):
         gg2i=interactions[xind]
-        (x,y,r,mc) = loadfiles.writesummary(o,zkey,gg2i,prot2map,scale)
-        splotch.splotch(ax,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind])
+        (x,y,r,mc) = loadfiles.writesummary(zkey,gg2i,prot2map,scale)
+        p = splotch.splotch(p,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind])
 
-def onpick(event):
-    ind = event.ind
-    (prot1,prot2)=zkey.split('-')
-    print prot1+"="+str(np.take(x, ind))+ " "+prot2+"="+str(np.take(y, ind))
-plt.tight_layout(pad=1, w_pad=0, h_pad=0)
-f.savefig(output+'.png')
-if zoom:
-    print "Click features enabled."
-    f.canvas.mpl_connect('pick_event', onpick)
-plt.show()
+#f.legend(tuple(handles),tuple(dirs),'upper right')
+show(p)

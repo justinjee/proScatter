@@ -26,6 +26,18 @@ def loadfasta(fasta,aa):
     return prot2map
 
 
+#def loadxwalk(dir, prot2map, allprot, scale):
+#input: same as load plink, except directories are full of xwalk files
+#creates a dictionary of gene-gene to coordinate tuples and updates allprot
+#    for filename in os.listdir(dir):
+#        if filename.endswith(".txt"):
+#        f = open(dir+'/'+filename,'r')
+#        for line in f:
+#       
+#    #check what proteins are what
+#    xname2pname = {}
+#    for p in 
+
 
 def loadplink(dir, prot2map, allprot, scale):
 #input: directory full of plink txt files, the prot2map from loadfasta, and the dictionary of all involved proteins thus far
@@ -67,7 +79,7 @@ def loadplink(dir, prot2map, allprot, scale):
  return (gg2i,allprot)
 
 
-def writesummary(o,key,gg2i,prot2map,scale):
+def writesummary(key,gg2i,prot2map,scale):
     (prot1,prot2)=key.split('-')
     x = np.empty([0])
     y = np.empty([0])
@@ -76,9 +88,7 @@ def writesummary(o,key,gg2i,prot2map,scale):
     if scale:
         mc = (max(prot2map[prot1]),max(prot2map[prot2]))
     if key in gg2i:
-        o.write(key + '\n')
         for t in gg2i[key]:
-            o.write(str(t[0])+','+str(t[1]) + ' -> ' + str(gg2i[key][t]) + '\n')
             x=np.append(x,t[0])
             y=np.append(y,t[1])
             r=np.append(r,gg2i[key][t])
