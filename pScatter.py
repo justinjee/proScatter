@@ -56,8 +56,8 @@ print "generating plot"
 
 #Define basic plot parameters
 color = ['blue','red','green']
-marker = ['o','x','+']
-basesize = 10 
+marker = ['o','*','+']
+basesize = 20 
 buffer=10
 numprot = len(allprot)
 sallprot = sorted(allprot)
@@ -75,7 +75,7 @@ if not zoom:
           for xind in range(len(interactions)):
               gg2i=interactions[xind]
               (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
-              m[i][j]=splotch.splotch(m[i][j],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind])
+              m[i][j]=splotch.splotch(m[i][j],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],dirs[xind],i==0 and j==numprot-1)
           j+=1
       i-=1
   p = gridplot(m)
@@ -84,7 +84,7 @@ else:
     for xind in range(len(interactions)):
         gg2i=interactions[xind]
         (x,y,r,mc) = loadfiles.writesummary(zkey,gg2i,prot2map,scale)
-        p = splotch.splotch(p,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind])
+        p = splotch.splotch(p,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind],True)
 
 #f.legend(tuple(handles),tuple(dirs),'upper right')
 show(p)
