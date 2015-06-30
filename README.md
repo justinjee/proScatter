@@ -1,4 +1,4 @@
-# pScatter
+# proScatter
 
 ##For visualizing pLink data from one or more experiments
 
@@ -6,13 +6,13 @@ by Justin Jee, with design by Katelyn McGary Shipper
 
 *Dependencies*
 
-pScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), and the visualization library [matplotlib](http://matplotlib.org/)
+proScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), and [bokeh](http://bokeh.pydata.org/en/latest/index.html)
 
 *Basic Use*
 
 To download, either download all 3 .py files into the same directory, or download the zipped folder (see button on the bottom right) 
 
-The inputs to pScatter include:
+The inputs to proScatter include:
 
 1.   A fasta file including the amino acid sequences of all the proteins under consideration.
 2.   A list of amino acids of interest (ex: K or CM)
@@ -29,13 +29,13 @@ The outputs include:
 
 *Example*
 
-python pScatter.py test.fasta K EXP1 EXP2 testout
+python proScatter.py test.fasta K EXP1 EXP2 testout
 
 ##Features
 
-pScatter enables multiple features, for example:
+proScatter enables multiple features, for example:
 
-python pScatter.py test.fasta K EXP1 EXP2 testout --scale --zoom=Prot1-Prot2
+python proScatter.py test.fasta K EXP1 EXP2 testout --scale --zoom=Prot1-Prot2
 
 Details are given below:
 
@@ -47,6 +47,3 @@ Scales both plot and output so that only the amino acids of interest are conside
 
 Zooms in on only one subplot (Prot1 vs Prot2). As an added feature, clicking on any point in the scatter plot will print the coordinates of that point in the console.
 
-*--xkcd*
-
-Because why not.
