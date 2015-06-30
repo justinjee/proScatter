@@ -6,7 +6,7 @@ def splotch(f, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c, m, l,
     (prot1,prot2)=key.split('-')
     TOOLS="hover,pan,wheel_zoom,box_zoom,reset,save"
     if f==None:
-        f = figure(x_range=(0,mc[0]+buffer),y_range=(0,mc[1]+buffer),tools=TOOLS, plot_width=1000/nprot,plot_height=1000/nprot,title=None,min_border=10)
+        f = figure(x_range=(0,mc[0]+buffer),y_range=(0,mc[1]+buffer),tools=TOOLS, plot_width=800/nprot,plot_height=800/nprot,title=None,min_border=10)
         f.xaxis.major_label_orientation = 3.14/4
     if not uselegend:
         l = None

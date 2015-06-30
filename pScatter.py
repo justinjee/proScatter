@@ -57,7 +57,7 @@ print "generating plot"
 #Define basic plot parameters
 color = ['blue','red','green']
 marker = ['o','*','+']
-basesize = 20 
+basesize = 25 
 buffer=10
 numprot = len(allprot)
 sallprot = sorted(allprot)
@@ -84,7 +84,7 @@ else:
     for xind in range(len(interactions)):
         gg2i=interactions[xind]
         (x,y,r,mc) = loadfiles.writesummary(zkey,gg2i,prot2map,scale)
-        p = splotch.splotch(p,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind],True)
+        p = splotch.splotch(p,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind],dirs[xind],True)
 
 #f.legend(tuple(handles),tuple(dirs),'upper right')
 show(p)
