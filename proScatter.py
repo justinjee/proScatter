@@ -66,18 +66,19 @@ handles = [0]*len(interactions)
 #Now do actual plotting
 output_file(output+'.html')
 if not zoom:
-  m = [[None for r in range(numprot)] for s in range(numprot)]
-  i=numprot-1
-  for prot2 in sallprot:
-      j=0
-      for prot1 in sallprot:
-          key = prot1 +'-'+ prot2
-          for xind in range(len(interactions)):
+  m = [[None for r in range(numprot+1)] for s in range(numprot)]
+  for xind in range(len(interactions)):
+      m[0][-1]=splotch.makelegend(m[0][-1],numprot,color[xind],marker[xind],dirs[xind])
+      i=numprot-1
+      for prot2 in sallprot:
+          j=0
+          for prot1 in sallprot:
+              key = prot1 +'-'+ prot2
               gg2i=interactions[xind]
               (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
-              m[i][j]=splotch.splotch(m[i][j],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],dirs[xind],i==0 and j==numprot-1)
-          j+=1
-      i-=1
+              m[i][j]=splotch.splotch(m[i][j],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False)
+              j+=1
+          i-=1
   p = gridplot(m)
 else:
     p = None
@@ -86,5 +87,4 @@ else:
         (x,y,r,mc) = loadfiles.writesummary(zkey,gg2i,prot2map,scale)
         p = splotch.splotch(p,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind],dirs[xind],True)
 
-#f.legend(tuple(handles),tuple(dirs),'upper right')
 show(p)

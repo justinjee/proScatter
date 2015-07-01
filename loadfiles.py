@@ -26,6 +26,9 @@ def loadfasta(fasta,aa):
     return prot2map
 
 
+#def whichprot(prot2map, aalist):
+    
+
 #def loadxwalk(dir, prot2map, allprot, scale):
 #input: same as load plink, except directories are full of xwalk files
 #creates a dictionary of gene-gene to coordinate tuples and updates allprot
@@ -48,7 +51,7 @@ def loadplink(dir, prot2map, allprot, scale):
   if filename.endswith(".txt"):
     f = open(dir+'/'+filename,'r')
     for line in f:
-        if ('Spectrum' in line) and ')-' in line and not ('REVERSE' in line):
+        if (',' in line) and ')-' in line and not ('REVERSE' in line):
             tokens = (line.rstrip()).split()
             interaction = tokens[-1]
             subtokens = re.split(r'[)|(|-]',interaction)
