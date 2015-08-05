@@ -14,7 +14,7 @@ def splotch(f, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c, m, l,
         l = None
     else:
         l = l.rstrip('/').split('/')[-1]
-    s1 = f.scatter(x,y,size=np.sqrt(basesize/nprot*r),alpha=0.4,color=c,marker=m,legend=l) 
+    s1 = f.scatter(x,y,size=np.sqrt(basesize/nprot*r),alpha=0.25,color=c,marker=m,legend=l) 
     s1.select(dict(type=HoverTool)).tooltips = {"("+prot1+","+prot2+")":"(@x,@y)"}
     if bedge:
         f.xaxis.axis_label = prot1
@@ -26,7 +26,7 @@ def splotch(f, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c, m, l,
 def makelegend(f,nprot,c,m,l):
 #makes empty plot and sticks a legend in it
     if f==None:
-        f = figure(tools=TOOLS, plot_width=100,plot_height=max(800/nprot,minsize),min_border=10)
+        f = figure(tools=TOOLS, plot_width=150,plot_height=max(800/nprot,minsize),min_border=10)
     l = l.rstrip('/').split('/')[-1]
     f.scatter([],[],color=c,marker=m,alpha=0.4,legend=l)
     f.outline_line_color = None

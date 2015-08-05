@@ -26,22 +26,6 @@ def loadfasta(fasta,aa):
     return prot2map
 
 
-#def whichprot(prot2map, aalist):
-    
-
-#def loadxwalk(dir, prot2map, allprot, scale):
-#input: same as load plink, except directories are full of xwalk files
-#creates a dictionary of gene-gene to coordinate tuples and updates allprot
-#    for filename in os.listdir(dir):
-#        if filename.endswith(".txt"):
-#        f = open(dir+'/'+filename,'r')
-#        for line in f:
-#       
-#    #check what proteins are what
-#    xname2pname = {}
-#    for p in 
-
-
 def loadplink(dir, prot2map, allprot, scale):
 #input: directory full of plink txt files, the prot2map from loadfasta, and the dictionary of all involved proteins thus far
 #creates a dictionary of gene-gene to coordinate tuples and updates allprot
@@ -54,35 +38,31 @@ def loadplink(dir, prot2map, allprot, scale):
         if (',' in line) and ')-' in line and not ('REVERSE' in line):
             tokens = (line.rstrip()).split()
             interaction = tokens[-1]
-            # optional e value cutoff with 2.0E-04 as example
-            eval = float(tokens[5])
-            cutoff = float("2.0E-02")
-            if eval < cutoff:
-                subtokens = re.split(r'[)|(|-]',interaction)
-                protloc = [(subtokens[0],subtokens[1]),(subtokens[3],subtokens[4])]
-                protloc = sorted(protloc)
-                prot1 = protloc[0][0]
-                prot2 = protloc[1][0]
-                if prot1 in prot2map and prot2 in prot2map:
-                    loc1 = prot2map[prot1][int(protloc[0][1])]
-                    loc2 = prot2map[prot2][int(protloc[1][1])]
-                    if scale:
-                        loc1 = int(protloc[0][1])
-                        loc2 = int(protloc[1][1])
-                    key = prot1 + '-' + prot2
-                    if not key in gg2i:
-                        gg2i[key] = defaultdict(int)
-                    gg2i[key][(loc1,loc2)] += 1
+            subtokens = re.split(r'[)|(|-]',interaction)
+            protloc = [(subtokens[0],subtokens[1]),(subtokens[3],subtokens[4])]
+            protloc = sorted(protloc)
+            prot1 = protloc[0][0]
+            prot2 = protloc[1][0]
+            if prot1 in prot2map and prot2 in prot2map:
+                loc1 = prot2map[prot1][int(protloc[0][1])]
+                loc2 = prot2map[prot2][int(protloc[1][1])]
+                if scale:
+                    loc1 = int(protloc[0][1])
+                    loc2 = int(protloc[1][1])
+                key = prot1 + '-' + prot2
+                if not key in gg2i:
+                    gg2i[key] = defaultdict(int)
+                gg2i[key][(loc1,loc2)] += 1
 
                 #Now handle symmetry
-                    key = prot2 + '-' + prot1
-                    if not key in gg2i:
-                        gg2i[key] = defaultdict(int)
-                    gg2i[key][(loc2,loc1)] += 1
+                key = prot2 + '-' + prot1
+                if not key in gg2i:
+                    gg2i[key] = defaultdict(int)
+                gg2i[key][(loc2,loc1)] += 1
 
-                    #Add protein names to allprot for graphing purposes
-                    allprot[prot1]=0
-                    allprot[prot2]=0
+                #Add protein names to allprot for graphing purposes
+                allprot[prot1]=0
+                allprot[prot2]=0
  return (gg2i,allprot)
 
 

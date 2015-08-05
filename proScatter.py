@@ -56,8 +56,8 @@ print "generating plot"
 
 #Define basic plot parameters
 color = ['blue','red','green']
-marker = ['o','*','+']
-basesize = 25 
+marker = ['o','o','o']
+basesize = 50 
 buffer=10
 numprot = len(allprot)
 sallprot = sorted(allprot)
