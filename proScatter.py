@@ -66,20 +66,20 @@ handles = [0]*len(interactions)
 #Now do actual plotting
 output_file(output+'.html')
 if not zoom:
-  m = [[None for r in range(numprot+1)] for s in range(numprot)]
-  for xind in range(len(interactions)):
-      m[0][-1]=splotch.makelegend(m[0][-1],numprot,color[xind],marker[xind],dirs[xind])
-      i=numprot-1
-      for prot2 in sallprot:
-          j=0
-          for prot1 in sallprot:
-              key = prot1 +'-'+ prot2
-              gg2i=interactions[xind]
-              (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
-              m[i][j]=splotch.splotch(m[i][j],m[0][-1],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False)
-              j+=1
-          i-=1
-  p = gridplot(m)
+    m = [[None for r in range(numprot+1)] for s in range(numprot)]
+    for xind in range(len(interactions)):
+        m[0][-1]=splotch.makelegend(m[0][-1],numprot,color[xind],marker[xind],dirs[xind])
+        i=numprot-1
+        for prot2 in sallprot:
+            j=0
+            for prot1 in sallprot:
+                key = prot1 +'-'+ prot2
+                gg2i=interactions[xind]
+                (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
+                m[i][j]=splotch.splotch(m[i][j],m[numprot-1][0],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False)
+                j+=1
+            i-=1
+    p = gridplot(m)
 else:
     for xind in range(len(interactions)):
         gg2i=interactions[xind]
