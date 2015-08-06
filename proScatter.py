@@ -25,6 +25,7 @@ args = []
 args2 = sys.argv[:]
 zoom=False
 scale=True #sets default to scaling based on aa only
+evalue=1
 for i in range(len(args2)):
     a = args2[i]
     if '--zoom' in a:
@@ -32,6 +33,9 @@ for i in range(len(args2)):
         (z,zkey)=a.split('=')
     elif '--scale' in a:
         scale=False
+    elif '--evalue' in a:
+         (e,evalue)=a.split('=')
+         evalue=float(evalue)
     else:
         args.append(a)
 
@@ -48,7 +52,7 @@ print "fasta loaded. loading pLink files"
 allprot = defaultdict(int)
 interactions = []
 for dir in dirs:
-    gg2i,allprot = loadfiles.loadplink(dir,prot2map,allprot,scale)
+    gg2i,allprot = loadfiles.loadplink(dir,prot2map,allprot,scale,evalue)
     interactions.append(gg2i)
 
 ### output ###

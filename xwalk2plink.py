@@ -100,4 +100,4 @@ for line in f:
     temp2 = temparray[3].split('-')
     (loc1,name1) = temp1[1:3]
     (loc2,name2) = temp2[1:3]
-    print ', # # # # 1 # # # # # # # '+translate(name1,int(loc1),x2prot)+'-'+translate(name2,int(loc2),x2prot)
+    print ', # # # # 0 # # # # # # # '+translate(name1,int(loc1),x2prot)+'-'+translate(name2,int(loc2),x2prot)
