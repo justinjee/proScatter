@@ -19,7 +19,7 @@ The inputs to proScatter include:
 3.   Up to three directories containing pLink files (in .txt format) with crosslink information (of the form ProteinA(position1)-ProteinB(position2))
 
 Note: If converting from excel to .txt files, it is important to save it in WINDOWS TXT FORMAT. Even if you are on Mac. 
-The exact features the program looks for in a given line are in the conditional "if ('Spectrum' in line) and ')-' in line and not ('REVERSE' in line):"
+The exact features the program looks for in a given line are in the conditional "if ',' in line and not ('REVERSE' in line):"
 You can modify this in loadfiles.py if your file looks different.
 
 The outputs include:
@@ -35,7 +35,7 @@ python proScatter.py test.fasta K EXP1 EXP2 testout
 
 proScatter enables multiple features, for example:
 
-python proScatter.py test.fasta K EXP1 EXP2 testout --scale --zoom=Prot1-Prot2
+python proScatter.py test.fasta K EXP1 EXP2 testout --scale --zoom=Prot1-Prot2 --evalue=0.001
 
 Details are given below:
 
@@ -47,3 +47,6 @@ Scales both plot and output so that only the amino acids of interest are conside
 
 Zooms in on only one subplot (Prot1 vs Prot2). As an added feature, clicking on any point in the scatter plot will print the coordinates of that point in the console.
 
+*--evalue=#*
+
+Considers only links with a score below a certain number #. Scores are expected to be in the 5th column
