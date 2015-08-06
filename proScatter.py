@@ -76,15 +76,14 @@ if not zoom:
               key = prot1 +'-'+ prot2
               gg2i=interactions[xind]
               (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
-              m[i][j]=splotch.splotch(m[i][j],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False)
+              m[i][j]=splotch.splotch(m[i][j],m[0][-1],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False)
               j+=1
           i-=1
   p = gridplot(m)
 else:
-    p = None
     for xind in range(len(interactions)):
         gg2i=interactions[xind]
         (x,y,r,mc) = loadfiles.writesummary(zkey,gg2i,prot2map,scale)
-        p = splotch.splotch(p,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind],dirs[xind],True)
+        p = splotch.splotch(None,None,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind],dirs[xind],True)
 
 show(p)
