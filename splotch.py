@@ -11,8 +11,8 @@ def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c,
     if not f:
         if fkey:
             f = figure(x_range=fkey.x_range,y_range=fkey.y_range,tools=TOOLS, plot_width=max(maxsize/nprot,minsize),plot_height=max(maxsize/nprot,minsize),title=None,min_border=10)
-            f.xaxis.bounds = (0, mc[0])
-            f.yaxis.bounds = (0, mc[1])
+            f.xgrid.bounds = (0, mc[0])
+            f.ygrid.bounds = (0, mc[1])
         else:
             f = figure(x_range=(0,mc[0]+buffer),y_range=(0,mc[1]+buffer),tools=TOOLS, plot_width=max(maxsize/nprot,minsize),plot_height=max(maxsize/nprot,minsize),title=None,min_border=10)
         f.xaxis.major_label_orientation = 3.14/4
@@ -25,13 +25,13 @@ def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c,
     if bedge:
         f.xaxis.axis_label = prot1
         f.plot_height+=11
-    #else:
-    #    f.xaxis.visible = None
+    else:
+        f.xaxis.visible = None
     if ledge:
         f.yaxis.axis_label = prot2
         f.plot_width+=11
-    #else:
-    #    f.yaxis.visible = None 
+    else:
+        f.yaxis.visible = None 
     f.legend.orientation = "top_left"
     return f
 
