@@ -64,8 +64,8 @@ def loadplink(dir, prot2map, allprot, scale, cutoff=1):
                 gg2i[key][(loc2,loc1)] += 1
 
                 #Add protein names to allprot for graphing purposes
-                allprot[prot1]=0
-                allprot[prot2]=0
+                allprot[prot1]=max(prot2map[prot1])
+                allprot[prot2]=max(prot2map[prot2])
  return (gg2i,allprot)
 
 

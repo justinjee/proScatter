@@ -1,13 +1,21 @@
 import numpy as np
 from bokeh.plotting import * 
-from bokeh.models import HoverTool 
+from bokeh.models import HoverTool, BoxZoomTool, ResetTool, PanTool, WheelZoomTool 
 
-TOOLS="hover,pan,wheel_zoom,box_zoom,reset,save"
+#TOOLS="hover,pan,wheel_zoom,box_zoom,reset,save"
 minsize=200
 maxsize=800
 
 def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c, m, l, uselegend):
     (prot1,prot2)=key.split('-')
+    hover = HoverTool(
+        tooltips="""
+        <div>
+            <span style="font-size: 12px">("""+prot1+""" @x, """+prot2+""" @y)</span>
+        </div>
+        """
+    )
+    TOOLS=[hover, BoxZoomTool(), ResetTool(), PanTool(), WheelZoomTool()]
     if not f:
         if fkey:
             f = figure(x_range=fkey.x_range,y_range=fkey.y_range,tools=TOOLS, plot_width=max(maxsize/nprot,minsize),plot_height=max(maxsize/nprot,minsize),title=None,min_border=10)
@@ -21,7 +29,7 @@ def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c,
     else:
         l = l.rstrip('/').split('/')[-1]
     s1 = f.scatter(x,y,size=np.sqrt(basesize/nprot*r),alpha=0.25,color=c,marker=m,legend=l) 
-    s1.select(dict(type=HoverTool)).tooltips = {"("+prot1+","+prot2+")":"(@x,@y)"}
+    #s1.select(dict(type=HoverTool)).tooltips = {"("+prot1+","+prot2+")":"(@x,@y)"}
     if bedge:
         f.xaxis.axis_label = prot1
         f.plot_height+=11
@@ -38,7 +46,7 @@ def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c,
 def makelegend(f,nprot,c,m,l):
 #makes empty plot and sticks a legend in it
     if f==None:
-        f = figure(tools=TOOLS,plot_width=150,plot_height=max(maxsize/nprot,minsize),min_border=10)
+        f = figure(plot_width=150,plot_height=max(maxsize/nprot,minsize),min_border=10)
     l = l.rstrip('/').split('/')[-1]
     f.scatter([],[],color=c,marker=m,alpha=0.4,legend=l)
     f.outline_line_color = None

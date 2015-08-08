@@ -16,7 +16,7 @@ import loadfiles
 import splotch
 import sys
 import numpy as np
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from bokeh.plotting import figure
 from bokeh.io import gridplot, output_file, show
 
@@ -64,7 +64,11 @@ marker = ['o','o','o']
 basesize = 50 
 buffer=10
 numprot = len(allprot)
-sallprot = sorted(allprot)
+#sort proteins by decreasing size
+sallprot = sorted(allprot.items(), key=lambda t:t[1])
+sallprot = [k[0] for k in sallprot]
+sallprot = sallprot[::-1]
+
 handles = [0]*len(interactions)
 
 #Now do actual plotting
