@@ -2,7 +2,7 @@
 
 ##For visualizing pLink data from one or more experiments
 
-by Justin Jee, with design by Katelyn McGary Shipper
+by Katelyn McGary Shipper and Justin Jee
 
 *Dependencies*
 
