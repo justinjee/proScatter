@@ -17,7 +17,8 @@ The inputs to proScatter include:
 1.   A fasta file including the amino acid sequences of all the proteins under consideration.
 2.   A list of amino acids of interest (ex: K or CM)
 3.   Up to three directories containing pLink files (in .txt format) with crosslink information (of the form ProteinA(position1)-ProteinB(position2))
-     - Specifically, the file should contain these columns: 1,1	File2335 Spectrum451 scans: 7430.dta	3.30E-02	2137.126654	0.00148	0.692192	null	1.pFind	1.pFind	1	RpoC(953)-RpoC(992)
+     - Specifically, the file should contain lines with these columns: 
+       <sub>1,1	File2335 Spectrum451 scans: 7430.dta	3.30E-02	2137.126654	0.00148	0.692192	null	1.pFind	1.pFind	1	RpoC(953)-RpoC(992)</sub>
      - However, only the e value (column 6) and the crosslink (last column) are used by proScatter
 
 Note: If converting from excel to .txt files, it is important to save it in WINDOWS TXT FORMAT. Even if you are on Mac. 
