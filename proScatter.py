@@ -25,6 +25,7 @@ args = []
 args2 = sys.argv[:]
 zoom=False
 scale=True #sets default to scaling based on aa only
+unjoin=False #sets default to yes linking plot axes together (pan zoom etc)
 evalue=1
 for i in range(len(args2)):
     a = args2[i]
@@ -36,6 +37,8 @@ for i in range(len(args2)):
     elif '--evalue' in a:
          (e,evalue)=a.split('=')
          evalue=float(evalue)
+    elif '--unjoin' in a:
+         unjoin=True
     else:
         args.append(a)
 
@@ -84,7 +87,7 @@ if not zoom:
                 key = prot1 +'-'+ prot2
                 gg2i=interactions[xind]
                 (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
-                m[i][j]=splotch.splotch(m[i][j],m[numprot-1][0],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False)
+                m[i][j]=splotch.splotch(m[i][j],m[numprot-1][0],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False,unjoin)
                 j+=1
             i-=1
     p = gridplot(m)

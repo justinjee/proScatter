@@ -6,7 +6,7 @@ from bokeh.models import HoverTool, BoxZoomTool, ResetTool, PanTool, WheelZoomTo
 minsize=200
 maxsize=800
 
-def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c, m, l, uselegend):
+def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c, m, l, uselegend, unjoin=False):
     (prot1,prot2)=key.split('-')
     hover = HoverTool(
         tooltips="""
@@ -17,7 +17,7 @@ def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c,
     )
     TOOLS=[hover, BoxZoomTool(), ResetTool(), PanTool(), WheelZoomTool()]
     if not f:
-        if fkey:
+        if fkey and not unjoin:
             f = figure(x_range=fkey.x_range,y_range=fkey.y_range,tools=TOOLS, plot_width=max(maxsize/nprot,minsize),plot_height=max(maxsize/nprot,minsize),title=None,min_border=10)
             f.xgrid.bounds = (0, mc[0])
             f.ygrid.bounds = (0, mc[1])
