@@ -15,27 +15,6 @@ def loadfasta(fasta, aa):
         prot2map[name].update({i:i for i,c in enumerate(seq) if c in aa})
     return prot2map
 
-def ldfasta(fasta, aa):
-    prot2map = {}
-    prot = ''
-    i=0
-    f0 = open(fasta,'r')
-    for line in f0:
-        if '>' in line: #new protein
-            prot = line[1:].rstrip()
-            prot2map[prot] = defaultdict(int)
-            i=1
-            j=1
-        else:
-            for c in line.rstrip():
-                if not c.isspace():
-                    if c in aa:
-                        prot2map[prot][i]=j
-                    j+=1
-                i+=1
-    return prot2map
-
-
 def loadplink(directory, prot2map, allprot, scale, cutoff=1):
     '''
     Input: directory full of plink txt files, the prot2map from loadfasta,
