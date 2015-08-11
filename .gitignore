@@ -1,0 +1,23 @@
+*.pyc
+.ipynb_checkpoints/*
+~*
+local_*.py
+/media/**
+*.sql
+*.gz
+*.geany
+*.sublime-*
+examples/*
+
+# Ignore all the virtualenv stuff except the actual packages
+/bin
+/include
+/lib/python*/*
+!/lib/python*/site-packages
+
+# Ignore easyinstall and setuptools
+/lib/python*/site-packages/easy-install.pth
+/lib/python*/site-packages/setuptools.pth
+/lib/python*/site-packages/setuptools-*
+/lib/python*/site-packages/pip-*
+
