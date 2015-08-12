@@ -1,5 +1,5 @@
 from collections import defaultdict
-from skbio.parse.sequences import parse_fasta
+import parse
 import os
 import re
 import numpy as np
@@ -10,7 +10,7 @@ def loadfasta(fasta, aa):
     create map of ordered amino acids of interest
     '''
     prot2map = {}
-    for name, seq in parse_fasta(fasta):
+    for name,seq in parse.parse_fasta(fasta):
         prot2map[name] = defaultdict(int)
         prot2map[name].update({i:i for i,c in enumerate(seq) if c in aa})
     return prot2map
@@ -61,8 +61,8 @@ def loadplink(directory, prot2map, allprot, scale, cutoff=1):
     return (gg2i,allprot)
 
 
-def writesummary(key,gg2i,prot2map,scale):
-    (prot1,prot2)=key.split('-')
+def writesummary(key, gg2i, prot2map, scale):
+    (prot1, prot2) = key.split('-')
     x = np.empty([0])
     y = np.empty([0])
     r = np.empty([0])
@@ -74,4 +74,4 @@ def writesummary(key,gg2i,prot2map,scale):
             x=np.append(x,t[0])
             y=np.append(y,t[1])
             r=np.append(r,gg2i[key][t])
-    return (x,y,r,mc)
+    return (x, y, r, mc)

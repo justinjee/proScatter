@@ -15,10 +15,21 @@
 import loadfiles
 import splotch
 import sys
+import argparse
 import numpy as np
 from collections import defaultdict, OrderedDict
 from bokeh.plotting import figure
 from bokeh.io import gridplot, output_file, show
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
+parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
+parser.add_argument('data_dirs', nargs='+', help='pLink output directory')
+parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
+                    type=str)
+parser.add_argument('-s', '--scale', help='scale both plot and outputs so that only amino acids of interest are considered', action='store_true')
+parser.add_argument('-e', '--evalue', help='e-value cutoff', type-float)
+args = parser.parse_args()
 
 #handle user options
 args = []
@@ -42,20 +53,17 @@ for i in range(len(args2)):
     else:
         args.append(a)
 
-fasta = args[1]
-aa = args[2]
-dirs = args[3:-1]
 output = args[-1]
 
 ### load fasta file ###
-prot2map = loadfiles.loadfasta(fasta,aa)
+prot2map = loadfiles.loadfasta(args.fasta_file, args.aminoacids)
 
 ### load plink file ###
 print "fasta loaded. loading pLink files"
 allprot = defaultdict(int)
 interactions = []
-for dir in dirs:
-    gg2i,allprot = loadfiles.loadplink(dir,prot2map,allprot,scale,evalue)
+for dirname in args.data_dirs:
+    gg2i, allprot = loadfiles.loadplink(dirname, prot2map, allprot, args.scale, args.evalue)
     interactions.append(gg2i)
 
 ### output ###
@@ -65,18 +73,18 @@ print "generating plot"
 color = ['blue','red','green']
 marker = ['o','o','o']
 basesize = 50 
-buffer=10
+buffer = 10
 numprot = len(allprot)
 #sort proteins by decreasing size
 sallprot = sorted(allprot.items(), key=lambda t:t[1])
 sallprot = [k[0] for k in sallprot]
 sallprot = sallprot[::-1]
 
-handles = [0]*len(interactions)
+handles = [0] * len(interactions)
 
 #Now do actual plotting
 output_file(output+'.html')
-if not zoom:
+if not args.zoom:
     m = [[None for r in range(numprot+1)] for s in range(numprot)]
     for xind in range(len(interactions)):
         m[0][-1]=splotch.makelegend(m[0][-1],numprot,color[xind],marker[xind],dirs[xind])
