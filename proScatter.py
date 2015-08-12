@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 #pScatter
 #Interaction visualizer for pLink data, by Justin Jee (with design by Katelyn McGary Shipper)
 #June 2015
@@ -22,42 +24,19 @@ from bokeh.plotting import figure
 from bokeh.io import gridplot, output_file, show
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
 parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
 parser.add_argument('data_dirs', nargs='+', help='pLink output directory')
+parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
 parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
                     type=str)
 parser.add_argument('-s', '--scale', help='scale both plot and outputs so that only amino acids of interest are considered', action='store_true')
-parser.add_argument('-e', '--evalue', help='e-value cutoff', type-float)
+parser.add_argument('-e', '--evalue', default=1.0, help='e-value cutoff', type=float)
+parser.add_argument('-o', '--output', default='output.html', help='output file (HTML) name')
+parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
 args = parser.parse_args()
-
-#handle user options
-args = []
-args2 = sys.argv[:]
-zoom=False
-scale=True #sets default to scaling based on aa only
-unjoin=False #sets default to yes linking plot axes together (pan zoom etc)
-evalue=1
-for i in range(len(args2)):
-    a = args2[i]
-    if '--zoom' in a:
-        zoom=True
-        (z,zkey)=a.split('=')
-    elif '--scale' in a:
-        scale=False
-    elif '--evalue' in a:
-         (e,evalue)=a.split('=')
-         evalue=float(evalue)
-    elif '--unjoin' in a:
-         unjoin=True
-    else:
-        args.append(a)
-
-output = args[-1]
 
 ### load fasta file ###
 prot2map = loadfiles.loadfasta(args.fasta_file, args.aminoacids)
-
 ### load plink file ###
 print "fasta loaded. loading pLink files"
 allprot = defaultdict(int)
@@ -80,29 +59,35 @@ sallprot = sorted(allprot.items(), key=lambda t:t[1])
 sallprot = [k[0] for k in sallprot]
 sallprot = sallprot[::-1]
 
-handles = [0] * len(interactions)
+for interaction in interactions:
+    print interaction
+    print '\n'
 
 #Now do actual plotting
-output_file(output+'.html')
+if args.output.endswith('.html'):
+    output_file(args.output) 
+else:
+    output_file(args.output + '.html')
+
 if not args.zoom:
-    m = [[None for r in range(numprot+1)] for s in range(numprot)]
-    for xind in range(len(interactions)):
-        m[0][-1]=splotch.makelegend(m[0][-1],numprot,color[xind],marker[xind],dirs[xind])
-        i=numprot-1
+    m = [[None] * (numprot + 1)] * numprot
+    for xind,interaction in enumerate(interactions):
+        m[0][-1] = splotch.makelegend(m[0][-1], numprot, color[xind], marker[xind], args.data_dirs[xind])
+        i =  numprot - 1
         for prot2 in sallprot:
-            j=0
+            j = 0
             for prot1 in sallprot:
-                key = prot1 +'-'+ prot2
-                gg2i=interactions[xind]
-                (x,y,r,mc) = loadfiles.writesummary(key,gg2i,prot2map,scale)
-                m[i][j]=splotch.splotch(m[i][j],m[numprot-1][0],x,y,r,basesize,buffer,mc,key,i==numprot-1,j==0,numprot,color[xind],marker[xind],None,False,unjoin)
+                key = prot1 + '-' + prot2
+                (x, y, r, mc) = loadfiles.writesummary(key, interaction, prot2map, args.scale)
+                m[i][j] = splotch.splotch(m[i][j], m[numprot-1][0], x, y, r, basesize, buffer, mc, key, 
+                        i==numprot-1, j==0, numprot, color[xind], marker[xind], None, False, args.unjoin)
                 j+=1
             i-=1
     p = gridplot(m)
 else:
-    for xind in range(len(interactions)):
-        gg2i=interactions[xind]
-        (x,y,r,mc) = loadfiles.writesummary(zkey,gg2i,prot2map,scale)
-        p = splotch.splotch(None,None,x,y,r,basesize,buffer,mc,zkey,True,True,1,color[xind],marker[xind],dirs[xind],True)
+    for xind,interaction in enumerate(interactions):
+        (x, y, r, mc) = loadfiles.writesummary(args.zoom, interaction, prot2map, args.scale)
+        p = splotch.splotch(None, None, x, y, r, basesize, buffer, mc, args.zoom, True, True, 1,
+                color[xind], marker[xind], args.data_dirs[xind], True)
 
 show(p)
