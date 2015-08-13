@@ -38,7 +38,6 @@ args = parser.parse_args()
 
 ### load fasta file ###
 prot2map = loadfiles.loadfasta(args.fasta_file, args.aminoacids)
-
 ### load plink file ###
 print "fasta loaded. loading pLink files"
 allprot = defaultdict(int)
@@ -61,8 +60,6 @@ numprot = len(allprot)
 sallprot = sorted(allprot.items(), key=lambda t:t[1])
 sallprot = [k[0] for k in sallprot]
 sallprot = sallprot[::-1]
-
-handles = [0] * len(interactions)
 
 #Now do actual plotting
 if args.output.endswith('.html'):
