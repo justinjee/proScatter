@@ -29,38 +29,15 @@ parser.add_argument('data_dirs', nargs='+', help='pLink output directory')
 parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
 parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
                     type=str)
-parser.add_argument('-s', '--scale', help='scale both plot and outputs so that only amino acids of interest are considered', action='store_true')
+parser.add_argument('-s', '--scale', help='scale both plot and outputs so that only amino acids of interest are considered', action='store_false')
 parser.add_argument('-e', '--evalue', default=1.0, help='e-value cutoff', type=float)
 parser.add_argument('-u', '--unjoin', help='unjoin plot axes', action='store_true')
 parser.add_argument('-o', '--output', default='output.html', help='output file (HTML) name')
 parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
 args = parser.parse_args()
 
-#handle user options
-#args = []
-#args2 = sys.argv[:]
-#zoom=False
-#scale=True #sets default to scaling based on aa only
-#evalue=1
-#for i in range(len(args2)):
-#    a = args2[i]
-#    if '--zoom' in a:
-#        zoom=True
-#        (z,zkey)=a.split('=')
-#    elif '--scale' in a:
-#        scale=False
-#    elif '--evalue' in a:
-#         (e,evalue)=a.split('=')
-#         evalue=float(evalue)
-#    else:
-#        args.append(a)
-#
-#output = args[-1]
-#
 ### load fasta file ###
 prot2map = loadfiles.loadfasta(args.fasta_file, args.aminoacids)
-
-print args
 
 ### load plink file ###
 print "fasta loaded. loading pLink files"
@@ -69,6 +46,7 @@ interactions = []
 for dirname in args.data_dirs:
     gg2i, allprot = loadfiles.loadplink(dirname, prot2map, allprot, args.scale, args.evalue)
     interactions.append(gg2i)
+
 
 ### output ###
 print "generating plot"
@@ -86,18 +64,14 @@ sallprot = sallprot[::-1]
 
 handles = [0] * len(interactions)
 
-for interaction in interactions:
-    print interaction
-    print '\n'
-
 #Now do actual plotting
 if args.output.endswith('.html'):
     output_file(args.output) 
 else:
     output_file(args.output + '.html')
 
-if not args.zoom:
-    m = [[None] * (numprot + 1)] * numprot
+if args.zoom is None:
+    m = [[None for r in range(numprot+1)] for s in range(numprot)]
     for xind,interaction in enumerate(interactions):
         m[0][-1] = splotch.makelegend(m[0][-1], numprot, color[xind], marker[xind], args.data_dirs[xind])
         i =  numprot - 1

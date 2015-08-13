@@ -44,8 +44,10 @@ def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c,
     return f
 
 def makelegend(f,nprot,c,m,l):
-#makes empty plot and sticks a legend in it
-    if f==None:
+    '''
+    makes empty plot and sticks a legend in it
+    '''
+    if f is None:
         f = figure(plot_width=150,plot_height=max(maxsize/nprot,minsize),min_border=10)
     l = l.rstrip('/').split('/')[-1]
     f.scatter([],[],color=c,marker=m,alpha=0.4,legend=l)
