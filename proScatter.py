@@ -23,69 +23,105 @@ from collections import defaultdict, OrderedDict
 from bokeh.plotting import figure
 from bokeh.io import gridplot, output_file, show
 
-parser = argparse.ArgumentParser()
-parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
-parser.add_argument('data_dirs', nargs='+', help='pLink output directory')
-parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
-parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
-                    type=str)
-parser.add_argument('-s', '--scale', help='scale both plot and outputs so that only amino acids of interest are considered', action='store_false')
-parser.add_argument('-e', '--evalue', default=1.0, help='e-value cutoff', type=float)
-parser.add_argument('-u', '--unjoin', help='unjoin plot axes', action='store_true')
-parser.add_argument('-o', '--output', default='output.html', help='output file (HTML) name')
-parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
-args = parser.parse_args()
+class ProScatter(object):
 
-### load fasta file ###
-prot2map = loadfiles.loadfasta(args.fasta_file, args.aminoacids)
-### load plink file ###
-print "fasta loaded. loading pLink files"
-allprot = defaultdict(int)
-interactions = []
-for dirname in args.data_dirs:
-    gg2i, allprot = loadfiles.loadplink(dirname, prot2map, allprot, args.scale, args.evalue)
-    interactions.append(gg2i)
+    color = ['blue','red','green']
+    marker = ['o','o','o']
+    basesize = 50 
+    buffer = 10
+    
+    def __init__(self, **kwargs):
+        super(ProScatter, self).__init__()
+        output = kwargs.pop('output')
+        if output.endswith('.html'):
+            self.output = output
+        else:
+            self.output = output + '.html'
+        for key,value in kwargs.iteritems():
+            setattr(self, key, value)
+        self._interactions = None
+        self._prot2map = None
+        self._m = None
+        self._allprot = None
+        self._numprot = 0
 
+    def _reverse_size_sort(self, proteins):
+        sprot = sorted(proteins.items(), key=lambda t:t[1])
+        return [k[0] for k in sprot][::-1]
 
-### output ###
-print "generating plot"
+    def load_data(self):
+        self._prot2map = loadfiles.loadfasta(self.fasta_file, self.aminoacids)
+        allprot = defaultdict(int)
+        interactions = []
+        for dirname in self.data_dirs:
+            gg2i, allprot = loadfiles.loadplink(dirname, self._prot2map, allprot, self.scale, self.evalue)
+            interactions.append(gg2i)
+        self._interactions = interactions
+        self._numprot = len(allprot)
+        self._allprot = self._reverse_size_sort(allprot)
 
-#Define basic plot parameters
-color = ['blue','red','green']
-marker = ['o','o','o']
-basesize = 50 
-buffer = 10
-numprot = len(allprot)
-#sort proteins by decreasing size
-sallprot = sorted(allprot.items(), key=lambda t:t[1])
-sallprot = [k[0] for k in sallprot]
-sallprot = sallprot[::-1]
+    def build_plot(self):
+        if self.zoom is None:
+            m = [[None for r in range(self._numprot+1)] for s in range(self._numprot)]
+            for xind,interaction in enumerate(self._interactions):
+                m[0][-1] = splotch.makelegend(m[0][-1],
+                        self._numprot,
+                        self.color[xind],
+                        self.marker[xind],
+                        self.data_dirs[xind])
+                i =  self._numprot - 1
+                for prot2 in self._allprot:
+                    j = 0
+                    for prot1 in self._allprot:
+                        key = prot1 + '-' + prot2
+                        (x, y, r, mc) = loadfiles.writesummary(key, interaction, self._prot2map, self.scale)
+                        m[i][j] = splotch.splotch(m[i][j], m[self._numprot-1][0], x, y, r,
+                                self.basesize,
+                                self.buffer,
+                                mc, key, i==self._numprot-1, j==0,
+                                self._numprot,
+                                self.color[xind],
+                                self.marker[xind], None, False, self.unjoin)
+                        j+=1
+                    i-=1
+            self.proscatter = gridplot(m)
+        else:
+            for xind,interaction in enumerate(self._interactions):
+                (x, y, r, mc) = loadfiles.writesummary(self.zoom, interaction,
+                        self._prot2map, self.scale)
+                self.proscatter = splotch.splotch(None, None, x, y, r,
+                        self.basesize,
+                        self.buffer, mc, self.zoom, True, True, 1,
+                        self.color[xind],
+                        self.marker[xind],
+                        self.data_dirs[xind], True)
 
-#Now do actual plotting
-if args.output.endswith('.html'):
-    output_file(args.output) 
-else:
-    output_file(args.output + '.html')
+    def show_scatter(self):
+        if self.proscatter is not None:
+            output_file(self.output)
+            show(self.proscatter)
 
-if args.zoom is None:
-    m = [[None for r in range(numprot+1)] for s in range(numprot)]
-    for xind,interaction in enumerate(interactions):
-        m[0][-1] = splotch.makelegend(m[0][-1], numprot, color[xind], marker[xind], args.data_dirs[xind])
-        i =  numprot - 1
-        for prot2 in sallprot:
-            j = 0
-            for prot1 in sallprot:
-                key = prot1 + '-' + prot2
-                (x, y, r, mc) = loadfiles.writesummary(key, interaction, prot2map, args.scale)
-                m[i][j] = splotch.splotch(m[i][j], m[numprot-1][0], x, y, r, basesize, buffer, mc, key, 
-                        i==numprot-1, j==0, numprot, color[xind], marker[xind], None, False, args.unjoin)
-                j+=1
-            i-=1
-    p = gridplot(m)
-else:
-    for xind,interaction in enumerate(interactions):
-        (x, y, r, mc) = loadfiles.writesummary(args.zoom, interaction, prot2map, args.scale)
-        p = splotch.splotch(None, None, x, y, r, basesize, buffer, mc, args.zoom, True, True, 1,
-                color[xind], marker[xind], args.data_dirs[xind], True)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='''
+    pScatter
+    Interaction visualizer for pLink XLMS data, by Justin Jee (with design by Katelyn McGary Shipper)
 
-show(p)
+    '''
+    )
+    parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
+    parser.add_argument('data_dirs', nargs='+', help='pLink output directory')
+    parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
+    parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
+                        type=str)
+    parser.add_argument('-s', '--scale', help='scale both plot and outputs so that only amino acids of interest are considered', action='store_false')
+    parser.add_argument('-e', '--evalue', default=1.0, help='e-value cutoff', type=float)
+    parser.add_argument('-u', '--unjoin', help='unjoin plot axes', action='store_true')
+    parser.add_argument('-o', '--output', default='output.html', help='output file (HTML) name')
+    parser.add_argument('-v', '--verbose', help='increase output verbosity', action='store_true')
+    args = parser.parse_args()
+
+    kwargs = vars(args)
+    proscatter = ProScatter(**kwargs)
+    proscatter.load_data()
+    proscatter.build_plot()
+    proscatter.show_scatter() 

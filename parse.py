@@ -60,15 +60,8 @@ def is_fasta_label(line):
 def LabeledRecordFinder(is_label_line, ignore=is_empty):
     """Returns function that returns successive labeled records from file.
     Includes label line in return value. Returns list of relevant lines.
-    Default constructor is string.strip, but can supply another constructor
-    to transform lines and/or coerce into correct type. If constructor is None,
-    passes along the lines without alteration.
     Skips over any lines for which ignore(line) evaluates True (default is
     to skip empty lines).
-    NOTE: Does _not_ raise an exception if the last line is a label line: for
-    some formats, this is acceptable. It is the responsibility of whatever is
-    parsing the sets of lines returned into records to complain if a record
-    is incomplete.
     """
     def parser(lines):
         with open(lines, 'r') as lines:
@@ -93,22 +86,16 @@ FastaFinder = LabeledRecordFinder(is_fasta_label)
 
 
 def parse_fasta(infile, finder=FastaFinder):
-    r"""Generator of labels and sequences from a fasta file.
-    .. note:: Deprecated in scikit-bio 0.2.0-dev
-       ``parse_fasta`` will be removed in scikit-bio 0.3.0. It is replaced by
-       ``read``, which is a more general method for deserializing
-       FASTA-formatted files. ``read`` supports multiple file formats,
-       automatic file format detection, etc. by taking advantage of
-       scikit-bio's I/O registry system. See :mod:`skbio.io` for more details.
+    """Generator of labels and sequences from a fasta file.
     """
 
     for rec in finder(infile):
         # first line must be a label line
         if not rec[0].startswith('>'):
-            raise Value("Found Fasta record without label line: %s" % rec)
+            raise ValueError("Found Fasta record without label line: %s" % rec)
         # record must have at least one sequence
         if len(rec) < 2:
-            raise RecordError("Found label line without sequences: %s" % rec)
+            raise ValueError("Found label line without sequences: %s" % rec)
 
         # remove the label character from the beginning of the label
         label = rec[0][1:].strip()
