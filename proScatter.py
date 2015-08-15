@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
-#proScatter
-#Interaction visualizer for pLink data
+#pScatter
+#Interaction visualizer for pLink data, by Justin Jee (with design by Katelyn McGary Shipper)
+#June 2015
 #
 #input: <fasta protein file> <alphabet of linkable amino acids> <dir1> <dir2> ... <output name>
 #where <dirN> is a directory containing all the pLink txt outputs for a single experiment 
@@ -58,6 +59,20 @@ class ProScatter(object):
         self._interactions = interactions
         self._numprot = len(allprot)
         self._allprot = self._reverse_size_sort(allprot)
+
+    def print_summary(self):
+        for prot2 in self._allprot:
+            for prot1 in self._allprot:
+                key = prot1 + '-' + prot2
+                print "Summary for "+key
+                for xind,interaction in enumerate(self._interactions):
+                    points = set(interaction[key])
+                    print "\t"+splotch.stripfolder(self.data_dirs[xind]) +": ",len(points)
+                    if xind==0:
+                        commonpoints = points
+                    else:
+                        commonpoints = commonpoints.intersection(points)
+                print "\tIntersection: ",len(commonpoints)
 
     def build_plot(self):
         if self.zoom is None:
@@ -122,5 +137,6 @@ if __name__ == "__main__":
     kwargs = vars(args)
     proscatter = ProScatter(**kwargs)
     proscatter.load_data()
+    proscatter.print_summary()
     proscatter.build_plot()
     proscatter.show_scatter() 

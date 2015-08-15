@@ -43,13 +43,16 @@ def splotch(f, fkey, x, y, r, basesize, buffer, mc, key, bedge, ledge, nprot, c,
     f.legend.orientation = "top_left"
     return f
 
+def stripfolder(s):
+    return s.rstrip('/').split('/')[-1]
+
 def makelegend(f,nprot,c,m,l):
     '''
     makes empty plot and sticks a legend in it
     '''
     if f is None:
         f = figure(plot_width=150,plot_height=max(maxsize/nprot,minsize),min_border=10)
-    l = l.rstrip('/').split('/')[-1]
+    l = stripfolder(l)
     f.scatter([],[],color=c,marker=m,alpha=0.4,legend=l)
     f.outline_line_color = None
     return f
