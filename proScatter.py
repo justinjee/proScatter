@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-#pScatter
-#Interaction visualizer for pLink data, by Justin Jee (with design by Katelyn McGary Shipper)
-#June 2015
+#proScatter
+#Interaction visualizer for pLink data
 #
 #input: <fasta protein file> <alphabet of linkable amino acids> <dir1> <dir2> ... <output name>
 #where <dirN> is a directory containing all the pLink txt outputs for a single experiment 
