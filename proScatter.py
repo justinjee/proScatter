@@ -66,7 +66,9 @@ class ProScatter(object):
                 key = prot1 + '-' + prot2
                 print "Summary for "+key
                 for xind,interaction in enumerate(self._interactions):
-                    points = set(interaction[key])
+                    points = set()
+                    if key in interaction:
+                        points = set(interaction[key])
                     print "\t"+splotch.stripfolder(self.data_dirs[xind]) +": ",len(points)
                     if xind==0:
                         commonpoints = points
