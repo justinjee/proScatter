@@ -1,38 +1,39 @@
 import re, HTMLParser
+import numpy as np
 
 RE = re.compile(r'(?P<segid1>\w+)[(](?P<resid1>\d+)[)]-(?P<segid2>\w+)[(](?P<resid2>\d+)[)]')        
 
 HEADER_SUM = [
-    'Order',
-    'ProteinAC',
-    'MW',
-    'pI',
-    'UniquePepNum',
-    'Coverage(%)',
-    'SpecNum',
-    'Non-ModifiedSpecNum',
-    'ModifiedSpecNum',
-    'UniqueModifiedPepNum',
-    'Description'
+    ('Order', int),
+    ('ProteinAC', str),
+    ('MW', float),
+    ('pI', float),
+    ('UniquePepNum', int),
+    ('Coverage(%)', float),
+    ('SpecNum', int),
+    ('Non-ModifiedSpecNum', int),
+    ('ModifiedSpecNum', int),
+    ('UniqueModifiedPepNum', int),
+    ('Description', str)
 ]
 
 
 HEADER_DETAILS = [
     #'',
-    'Order',
-    'Spectrum',
-    'Sequence',
-    'Score',
-    'Calc_M',
-    'Delta_M',
-    'ppm',
-    'Modification',
-    'Sample',
-    'Engine',
-    'MatchedIons',
-    'MissCleaveNum',
-    'Rank',
-    'Proteins'
+    ('Order', int),
+    ('Spectrum', str),
+    ('Sequence', str),
+    ('Score', float),
+    ('Calc_M', float),
+    ('Delta_M', float),
+    ('ppm', float),
+    ('Modification', str),
+    ('Sample', str),
+    ('Engine', str),
+    ('MatchedIons', int),
+    ('MissCleaveNum', int),
+    ('Rank', int),
+    ('Proteins', str)
 ]
 
 def check_lists(lst1, lst2):
@@ -61,16 +62,19 @@ class PLinkParser(HTMLParser.HTMLParser):
         record = {}
         cleaned = [x for x in self.buf if x != '']
         for key,value in zip(self._current_header, cleaned):
-            record[key] = value
+            try:
+                record[key[0]] = key[1](value)
+            except ValueError:
+                record[key[0]] = np.nan
         self._current.append(record)
         self.buf = []
         
     def handle_endtag(self, tag):
         ntag = tag.upper()
         if ntag == 'TR':
-            if check_lists(HEADER_SUM, self.buf):
+            if check_lists([x[0] for x in HEADER_SUM], self.buf):
                 self._current, self._current_header = self.sum_records, HEADER_SUM
-            elif check_lists(HEADER_DETAILS, self.buf):
+            elif check_lists([x[0] for x in HEADER_DETAILS], self.buf):
                 self._current, self._current_header = self.details_records, HEADER_DETAILS
             else:
                 self._add_record()
