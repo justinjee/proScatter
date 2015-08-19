@@ -1,8 +1,11 @@
 from collections import defaultdict
+import pandas as pd
 import parse
 import os
 import re
 import numpy as np
+
+RE = re.compile(r'(?P<segid1>\w+)[(](?P<resid1>\d+)[)]-(?P<segid2>\w+)[(](?P<resid2>\d+)[)]')        
 
 def loadfasta(fasta, aa):
     '''
@@ -14,6 +17,26 @@ def loadfasta(fasta, aa):
         prot2map[name] = defaultdict(int)
         prot2map[name].update({i:i for i,c in enumerate(seq) if c in aa})
     return prot2map
+
+def load_plink_html(filename):
+    tp = parse.PLinkParser()
+    with open(filename, 'r') as fi:
+        for line in fi:
+            tp.feed(line)
+
+    def build_xl_df(df, xl_field):
+        def extract_xl_coord(rec):
+            m = RE.search(rec[xl_field])
+            return pd.Series([
+                m.group('segid1'), int(m.group('resid1')), m.group('segid2'), int(m.group('resid2'))
+                ], index=['prot1', 'res1', 'prot2', 'res2'])
+
+        return df.merge(df.apply(extract_xl_coord, axis=1), left_index=True, right_index=True)
+    
+    df_details = pd.DataFrame.from_records(tp.details_records).dropna()
+    df_sum = pd.DataFrame.from_records(tp.sum_records).dropna()
+    return build_xl_df(df_details, 'Proteins'),  build_xl_df(df_sum, 'ProteinAC')
+
 
 def loadplink(directory, prot2map, allprot, scale, cutoff=1):
     '''

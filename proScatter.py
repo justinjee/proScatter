@@ -44,6 +44,8 @@ class ProScatter(object):
         self._m = None
         self._allprot = None
         self._numprot = 0
+        self._df_sum = None
+        self._df_details = None
 
     def _reverse_size_sort(self, proteins):
         sprot = sorted(proteins.items(), key=lambda t:t[1])
@@ -59,6 +61,9 @@ class ProScatter(object):
         self._interactions = interactions
         self._numprot = len(allprot)
         self._allprot = self._reverse_size_sort(allprot)
+
+    def load_html(self):
+        self._df_sum, self._df_details = loadfiles.load_plink_html(self.html_file)
 
     def print_summary(self):
         for prot2 in self._allprot:
@@ -126,6 +131,7 @@ if __name__ == "__main__":
     )
     parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
     parser.add_argument('data_dirs', nargs='+', help='pLink output directory')
+    parser.add_argument('-h', '--html', type=str, help='pLink output in .html format')
     parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
     parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
                         type=str)
@@ -139,6 +145,8 @@ if __name__ == "__main__":
     kwargs = vars(args)
     proscatter = ProScatter(**kwargs)
     proscatter.load_data()
+    if proscatter.html:
+        proscatter.load_html()
     proscatter.print_summary()
     proscatter.build_plot()
     proscatter.show_scatter() 
