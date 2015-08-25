@@ -28,6 +28,14 @@ def load_fasta(fasta):
     return prot_map
 
 
+def sym_df(df, columns={'res1': 'res2', 'res2': 'res1',}):
+    df_ = df.copy()
+    df_.rename(columns=columns, inplace=True)
+    df_ = pd.concat([df, df_])
+    df_.reset_index(drop=True, inplace=True)
+    return df_
+
+
 def load_plink_html(filename):
     tp = parse.PLinkParser()
     with open(filename, 'r') as fi:
@@ -43,9 +51,9 @@ def load_plink_html(filename):
 
         return df.merge(df.apply(extract_xl_coord, axis=1), left_index=True, right_index=True)
     
-    df_details = pd.DataFrame.from_records(tp.details_records).dropna()
-    df_sum = pd.DataFrame.from_records(tp.sum_records).dropna()
-    return build_xl_df(df_details, 'Proteins'),  build_xl_df(df_sum, 'ProteinAC')
+    df_details = build_xl_df(pd.DataFrame.from_records(tp.details_records).dropna(), 'Proteins')
+    df_sum = build_xl_df(pd.DataFrame.from_records(tp.sum_records).dropna(), 'ProteinAC')
+    return  sym_df(df_details), sym_df(df_sum)
 
 
 def loadplink(directory, prot2map, allprot, scale, cutoff=1):

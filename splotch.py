@@ -67,6 +67,7 @@ def splotch_df(df, basesize=50):
         fig.yaxis.axis_label = key[0]
         fig.xaxis.visible = False
         fig.yaxis.visible = False
+        fig.xaxis.major_label_orientation = math.pi / 4
         row.append(fig)
         if (i + 1) % num_prot == 0:
             fig.yaxis.visible = True

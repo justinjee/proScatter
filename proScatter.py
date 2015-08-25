@@ -133,6 +133,7 @@ class ProScatter(object):
                         alpha=0.25)
             fig.xaxis.axis_label = key[1]
             fig.yaxis.axis_label = key[0]
+            fig.xaxis.major_label_orientation = math.pi / 4
             fig.xaxis.visible = False
             fig.yaxis.visible = False
             row.append(fig)
