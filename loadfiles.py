@@ -18,6 +18,16 @@ def loadfasta(fasta, aa):
         prot2map[name].update({i:i for i,c in enumerate(seq) if c in aa})
     return prot2map
 
+def load_fasta(fasta):
+    prot_map = {}
+    for name,seq in parse.parse_fasta(fasta):
+        protein = []
+        for i,c in enumerate(seq):
+            protein.append({'aminoacid': c, 'pos': i+1})
+        prot_map[name] = pd.DataFrame.from_records(protein)
+    return prot_map
+
+
 def load_plink_html(filename):
     tp = parse.PLinkParser()
     with open(filename, 'r') as fi:

@@ -14,7 +14,9 @@
 #IMPORTANT NOTE: If saving input txt file from excel it is important to save in Windows txt format
 #dependencies: numpy, matplotlib
 
+from __future__ import division, print_function
 import loadfiles
+import math
 import splotch
 import sys
 import argparse
@@ -69,17 +71,17 @@ class ProScatter(object):
         for prot2 in self._allprot:
             for prot1 in self._allprot:
                 key = prot1 + '-' + prot2
-                print "Summary for "+key
+                print("Summary for {}".format(key))
                 for xind,interaction in enumerate(self._interactions):
                     points = set()
                     if key in interaction:
                         points = set(interaction[key])
-                    print "\t"+splotch.stripfolder(self.data_dirs[xind]) +": ",len(points)
+                    print("\t{0}: {1}".format(splotch.stripfolder(self.data_dirs[xind]),len(points)))
                     if xind==0:
                         commonpoints = points
                     else:
                         commonpoints = commonpoints.intersection(points)
-                print "\tIntersection: ",len(commonpoints)
+                print("\tIntersection: {}".format(len(commonpoints)))
 
     def build_plot(self):
         if self.zoom is None:
@@ -117,6 +119,34 @@ class ProScatter(object):
                         self.marker[xind],
                         self.data_dirs[xind], True)
 
+    def make_plot(self):
+        TOOLS = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,previewsave"
+        rows = []
+        row = []
+        num_prot = len(set(self._df_sum['prot1']))
+        grouped = self._df_sum.groupby(['prot1', 'prot2'])
+
+        for i, (key,group) in enumerate(grouped):
+            fig = figure(tools=TOOLS, width=250, height=250, title=None, min_border=10)
+            scatter = fig.scatter(group['res2'], group['res1'],
+                        size=np.sqrt(self.basesize / num_prot * group['SpecNum']),
+                        alpha=0.25)
+            fig.xaxis.axis_label = key[1]
+            fig.yaxis.axis_label = key[0]
+            fig.xaxis.visible = False
+            fig.yaxis.visible = False
+            row.append(fig)
+            if (i + 1) % num_prot == 0:
+                fig.yaxis.visible = True
+                rows.append(row[::-1])
+                row = []
+
+        for fig in rows[-1]:
+            fig.xaxis.visible = True
+
+        self.proscatter = gridplot(rows)
+
+    
     def show_scatter(self):
         if self.proscatter is not None:
             output_file(self.output)
