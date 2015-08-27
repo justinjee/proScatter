@@ -6,7 +6,7 @@ by Katelyn McGary Shipper, Justin Jee, and Ilya Shamovsky
 
 *Dependencies*
 
-proScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), and [bokeh](http://bokeh.pydata.org/en/latest/index.html)
+proScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), and [bokeh](http://bokeh.pydata.org/en/latest/index.html), [pandas](http://pandas.pydata.org/)
 
 *Basic Use*
 
@@ -16,14 +16,7 @@ The inputs to proScatter include:
 
 1.   A fasta file including the amino acid sequences of all the proteins under consideration.
 2.   A list of amino acids of interest (ex: K or CM)
-3.   Up to three directories containing pLink files (in .txt format) with crosslink information (of the form ProteinA(position1)-ProteinB(position2))
-     - Specifically, the file should contain lines with columns like this: 
-     - <sub>1,1	File2335 Spectrum451 scans: 7430.dta	3.30E-02	2137.126654	0.00148	0.692192	null	1.pFind	1.pFind	1	RpoC(953)-RpoC(992)</sub>
-     - However, only the e value (column 6) and the crosslink (last column) are used by proScatter
-
-Note: If converting from excel to .txt files, it is important to save it in WINDOWS TXT FORMAT. Even if you are on Mac. 
-The exact features the program looks for in a given line are in the conditional "if ',' in line and not ('REVERSE' in line):"
-You can modify this in loadfiles.py if your file looks different.
+3.   pLink output in `.html` format
 
 The outputs include:
 
@@ -32,13 +25,13 @@ The outputs include:
 
 *Example*
 
-python proScatter.py test.fasta K EXP1 EXP2 testout
+`./proScatter.py examples/test.fasta examples/IdProTable_combine.html`
 
 ##Features
 
 proScatter enables multiple features, for example:
 
-python proScatter.py test.fasta K EXP1 EXP2 testout --scale --zoom=Prot1-Prot2 --evalue=0.001
+`python proScatter.py test.fasta K test.html --scale --zoom=Prot1-Prot2 --evalue=0.001`
 
 Details are given below:
 
@@ -53,3 +46,28 @@ Zooms in on only one subplot (Prot1 vs Prot2). As an added feature, clicking on 
 *--evalue=#*
 
 Considers only links with a score below a certain number #. Scores are expected to be in the 5th column
+
+```
+     usage: proScatter.py [-h] [-a AMINOACIDS] [-z ZOOM] [-s] [-e EVALUE] [-u]
+                          [-o OUTPUT] [-v]
+                          fasta_file plink
+     
+     positional arguments:
+       fasta_file            fasta file with protein sequences
+       plink                 pLink output .html file
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+       -a AMINOACIDS, --aminoacids AMINOACIDS
+                             cross-linkable aminoacids. Defaults to Lysine (K).
+       -z ZOOM, --zoom ZOOM  Prot1-Prot2 only display subplot for proteins Prot1 vs
+                             Prot2
+       -s, --scale           scale both plot and outputs so that only amino acids
+                             of interest are considered
+       -e EVALUE, --evalue EVALUE
+                             e-value cutoff
+       -u, --unjoin          unjoin plot axes
+       -o OUTPUT, --output OUTPUT
+                             output file (HTML) name
+       -v, --verbose         increase output verbosity
+```
