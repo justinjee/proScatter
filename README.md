@@ -6,7 +6,7 @@ by Katelyn McGary Shipper, Justin Jee, and Ilya Shamovsky
 
 *Dependencies*
 
-proScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), and [bokeh](http://bokeh.pydata.org/en/latest/index.html), [pandas](http://pandas.pydata.org/)
+proScatter uses [python](https://www.python.org/downloads/), [numpy](http://www.numpy.org/), [bokeh](http://bokeh.pydata.org/en/latest/index.html), and [pandas](http://pandas.pydata.org/)
 
 *Basic Use*
 
