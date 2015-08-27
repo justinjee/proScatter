@@ -1,53 +1,92 @@
 import re, HTMLParser
+import numpy as np
 
 RE = re.compile(r'(?P<segid1>\w+)[(](?P<resid1>\d+)[)]-(?P<segid2>\w+)[(](?P<resid2>\d+)[)]')        
+
+HEADER_SUM = [
+    ('Order', int),
+    ('ProteinAC', str),
+    ('MW', float),
+    ('pI', float),
+    ('UniquePepNum', int),
+    ('Coverage(%)', float),
+    ('SpecNum', int),
+    ('Non-ModifiedSpecNum', int),
+    ('ModifiedSpecNum', int),
+    ('UniqueModifiedPepNum', int),
+    ('Description', str)
+]
+
+
+HEADER_DETAILS = [
+    #'',
+    ('Order', int),
+    ('Spectrum', str),
+    ('Sequence', str),
+    ('Score', float),
+    ('Calc_M', float),
+    ('Delta_M', float),
+    ('ppm', float),
+    ('Modification', str),
+    ('Sample', str),
+    ('Engine', str),
+    ('MatchedIons', int),
+    ('MissCleaveNum', int),
+    ('Rank', int),
+    ('Proteins', str)
+]
+
+def check_lists(lst1, lst2):
+    if len(lst1) != len(lst2):
+        return False
+    return len([x for x,y in zip(lst1, lst2) if x != y]) == 0
+
 
 class PLinkParser(HTMLParser.HTMLParser):
 
     def __init__(self):
-        #super(TxtParser, self).__init__()
         HTMLParser.HTMLParser.__init__(self)
+        self.sum_records = []
+        self.details_records = []
+        self._current = None
+        self._current_header = None
         self.buf = []
-        self._line = ''
-        self._row = False
         self._td = False
-        self._td_count = 0
-        self._grab = False
         
     def handle_starttag(self, tag, attrs):
         ntag = tag.upper()
-        if ntag == 'TR':
-            self._row = True
-        elif ntag == 'TD':
+        if ntag == 'TD':
             self._td = True
-            self._td_count += 1
+                
+    def _add_record(self):
+        record = {}
+        cleaned = [x for x in self.buf if x != '']
+        for key,value in zip(self._current_header, cleaned):
+            try:
+                record[key[0]] = key[1](value)
+            except ValueError:
+                record[key[0]] = np.nan
+        self._current.append(record)
+        self.buf = []
         
     def handle_endtag(self, tag):
         ntag = tag.upper()
         if ntag == 'TR':
-            self._row = False
-            self._td_count = 0
-            if self._line:
-                self.buf.append(self._line)
-            self._line = ''
+            if check_lists([x[0] for x in HEADER_SUM], self.buf):
+                self._current, self._current_header = self.sum_records, HEADER_SUM
+            elif check_lists([x[0] for x in HEADER_DETAILS], self.buf):
+                self._current, self._current_header = self.details_records, HEADER_DETAILS
+            else:
+                self._add_record()
+            self.buf = []
         elif ntag == 'TD':
             self._td = False
-        
+            
     def handle_data(self, data):
-        if self._td and self._td_count == 1 and data.strip().isdigit():
-            self._grab = True
-        elif self._td_count == 2 and self._grab:
-            self._line += data.strip()
-            self._grab = False
-        
-def extract_xl_coord(line):
-    m = RE.search(line)
-    return {
-        'prot1': m.group('segid1'),
-        'resid1': m.group('resid1'),
-        'prot2': m.group('segid2'),
-        'resid2': m.group('resid2'),
-        }
+        if self._td and data:
+            self.buf.append(data.strip())
+    
+    
     
 def is_empty(line):
     """Returns True empty lines and lines consisting only of whitespace."""

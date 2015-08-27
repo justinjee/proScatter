@@ -14,12 +14,12 @@
 #IMPORTANT NOTE: If saving input txt file from excel it is important to save in Windows txt format
 #dependencies: numpy, matplotlib
 
+from __future__ import division, print_function
 import loadfiles
+import math
 import splotch
-import sys
 import argparse
 import numpy as np
-from collections import defaultdict, OrderedDict
 from bokeh.plotting import figure
 from bokeh.io import gridplot, output_file, show
 
@@ -39,79 +39,49 @@ class ProScatter(object):
             self.output = output + '.html'
         for key,value in kwargs.iteritems():
             setattr(self, key, value)
-        self._interactions = None
-        self._prot2map = None
-        self._m = None
-        self._allprot = None
-        self._numprot = 0
-
-    def _reverse_size_sort(self, proteins):
-        sprot = sorted(proteins.items(), key=lambda t:t[1])
-        return [k[0] for k in sprot][::-1]
+        self._df_sum = None
+        self._df_details = None
+        self._df_fasta = None
 
     def load_data(self):
-        self._prot2map = loadfiles.loadfasta(self.fasta_file, self.aminoacids)
-        allprot = defaultdict(int)
-        interactions = []
-        for dirname in self.data_dirs:
-            gg2i, allprot = loadfiles.loadplink(dirname, self._prot2map, allprot, self.scale, self.evalue)
-            interactions.append(gg2i)
-        self._interactions = interactions
-        self._numprot = len(allprot)
-        self._allprot = self._reverse_size_sort(allprot)
+        self._df_details, self._df_sum = loadfiles.load_plink_html(self.plink)
+        self._df_fasta = loadfiles.load_aa_positions(self.fasta_file, self.aminoacids)
 
     def print_summary(self):
-        for prot2 in self._allprot:
-            for prot1 in self._allprot:
-                key = prot1 + '-' + prot2
-                print "Summary for "+key
-                for xind,interaction in enumerate(self._interactions):
-                    points = set()
-                    if key in interaction:
-                        points = set(interaction[key])
-                    print "\t"+splotch.stripfolder(self.data_dirs[xind]) +": ",len(points)
-                    if xind==0:
-                        commonpoints = points
-                    else:
-                        commonpoints = commonpoints.intersection(points)
-                print "\tIntersection: ",len(commonpoints)
+        grouped = self._df_sum.groupby(['prot1', 'prot2'])
+        for gname,group in grouped:
+            print("Summary for {}".format(gname))
+            print("{} interactions".format(group.shape[0]))
 
     def build_plot(self):
-        if self.zoom is None:
-            m = [[None for r in range(self._numprot+1)] for s in range(self._numprot)]
-            for xind,interaction in enumerate(self._interactions):
-                m[0][-1] = splotch.makelegend(m[0][-1],
-                        self._numprot,
-                        self.color[xind],
-                        self.marker[xind],
-                        self.data_dirs[xind])
-                i =  self._numprot - 1
-                for prot2 in self._allprot:
-                    j = 0
-                    for prot1 in self._allprot:
-                        key = prot1 + '-' + prot2
-                        (x, y, r, mc) = loadfiles.writesummary(key, interaction, self._prot2map, self.scale)
-                        m[i][j] = splotch.splotch(m[i][j], m[self._numprot-1][0], x, y, r,
-                                self.basesize,
-                                self.buffer,
-                                mc, key, i==self._numprot-1, j==0,
-                                self._numprot,
-                                self.color[xind],
-                                self.marker[xind], None, False, self.unjoin)
-                        j+=1
-                    i-=1
-            self.proscatter = gridplot(m)
-        else:
-            for xind,interaction in enumerate(self._interactions):
-                (x, y, r, mc) = loadfiles.writesummary(self.zoom, interaction,
-                        self._prot2map, self.scale)
-                self.proscatter = splotch.splotch(None, None, x, y, r,
-                        self.basesize,
-                        self.buffer, mc, self.zoom, True, True, 1,
-                        self.color[xind],
-                        self.marker[xind],
-                        self.data_dirs[xind], True)
+        TOOLS = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,previewsave"
+        rows = []
+        row = []
+        num_prot = len(set(self._df_sum['prot1']))
+        grouped = self._df_sum.groupby(['prot1', 'prot2'])
 
+        for i, (key,group) in enumerate(grouped):
+            fig = figure(tools=TOOLS, width=250, height=250, title=None, min_border=10)
+            scatter = fig.scatter(group['res2'], group['res1'],
+                        size=np.sqrt(self.basesize / num_prot * group['SpecNum']),
+                        alpha=0.25)
+            fig.xaxis.axis_label = key[1]
+            fig.yaxis.axis_label = key[0]
+            fig.xaxis.major_label_orientation = math.pi / 4
+            fig.xaxis.visible = False
+            fig.yaxis.visible = False
+            row.append(fig)
+            if (i + 1) % num_prot == 0:
+                fig.yaxis.visible = True
+                rows.append(row[::-1])
+                row = []
+
+        for fig in rows[-1]:
+            fig.xaxis.visible = True
+
+        self.proscatter = gridplot(rows)
+
+    
     def show_scatter(self):
         if self.proscatter is not None:
             output_file(self.output)
@@ -119,13 +89,13 @@ class ProScatter(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''
-    pScatter
+    ProScatter
     Interaction visualizer for pLink XLMS data, by Justin Jee (with design by Katelyn McGary Shipper)
 
     '''
     )
     parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
-    parser.add_argument('data_dirs', nargs='+', help='pLink output directory')
+    parser.add_argument('plink', type=str, help='pLink output .html file')
     parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
     parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
                         type=str)
