@@ -22,13 +22,12 @@ import argparse
 import numpy as np
 from bokeh.plotting import figure
 from bokeh.io import gridplot, output_file, show
+from bokeh.models import Range1d
 
 class ProScatter(object):
 
     color = ['blue','red','green']
     marker = ['o','o','o']
-    basesize = 50 
-    buffer = 10
     
     def __init__(self, **kwargs):
         super(ProScatter, self).__init__()
@@ -54,30 +53,19 @@ class ProScatter(object):
             print("{} interactions".format(group.shape[0]))
 
     def build_plot(self):
-        TOOLS = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,previewsave"
-        rows = []
-        row = []
-        num_prot = len(set(self._df_sum['prot1']))
-        grouped = self._df_sum.groupby(['prot1', 'prot2'])
-
-        for i, (key,group) in enumerate(grouped):
-            fig = figure(tools=TOOLS, width=250, height=250, title=None, min_border=10)
-            scatter = fig.scatter(group['res2'], group['res1'],
-                        size=np.sqrt(self.basesize / num_prot * group['SpecNum']),
-                        alpha=0.25)
-            fig.xaxis.axis_label = key[1]
-            fig.yaxis.axis_label = key[0]
-            fig.xaxis.major_label_orientation = math.pi / 4
-            fig.xaxis.visible = False
-            fig.yaxis.visible = False
-            row.append(fig)
-            if (i + 1) % num_prot == 0:
-                fig.yaxis.visible = True
-                rows.append(row[::-1])
-                row = []
-
-        for fig in rows[-1]:
-            fig.xaxis.visible = True
+        numprot = len(set(self._df_sum['prot1']))
+        rows = [[None for r in range(numprot+1)] for s in range(numprot)]
+        sorted_prot_list = sorted(set(self._df_sum['prot1']))
+        xr = Range1d(0,self._df_sum['res1'].max())
+        yr = Range1d(0,self._df_sum['res2'].max())
+        i=numprot-1
+        for prot1 in sorted_prot_list:
+            j=0
+            for prot2 in sorted_prot_list:
+                subdf = self._df_sum[(self._df_sum['prot1']==prot1) & (self._df_sum['prot2']==prot2)]
+                rows[i][j] = splotch.splotch_df(subdf, prot1, prot2, xr, yr, i==numprot-1, j==0)
+                j+=1
+            i-=1
 
         self.proscatter = gridplot(rows)
 
