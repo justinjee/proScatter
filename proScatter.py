@@ -59,9 +59,9 @@ class ProScatter(object):
         xr = Range1d(0,self._df_sum['res1'].max())
         yr = Range1d(0,self._df_sum['res2'].max())
         i=numprot-1
-        for prot1 in sorted_prot_list:
+        for prot2 in sorted_prot_list:
             j=0
-            for prot2 in sorted_prot_list:
+            for prot1 in sorted_prot_list:
                 subdf = self._df_sum[(self._df_sum['prot1']==prot1) & (self._df_sum['prot2']==prot2)]
                 rows[i][j] = splotch.splotch_df(subdf, prot1, prot2, xr, yr, i==numprot-1, j==0)
                 j+=1
