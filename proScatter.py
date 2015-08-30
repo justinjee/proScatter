@@ -56,6 +56,7 @@ class ProScatter(object):
         numprot = len(set(self._df_sum['prot1']))
         rows = [[None for r in range(numprot+1)] for s in range(numprot)]
         sorted_prot_list = sorted(set(self._df_sum['prot1']))
+        print(sorted_prot_list)
         xr = Range1d(0,self._df_sum['res1'].max())
         yr = Range1d(0,self._df_sum['res2'].max())
         i=numprot-1

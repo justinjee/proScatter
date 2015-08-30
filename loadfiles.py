@@ -26,7 +26,7 @@ def load_aa_positions(fasta, aa):
     return pd.concat(aa_map)
 
 
-def sym_df(df, columns={'res1': 'res2', 'res2': 'res1',}):
+def sym_df(df, columns={'res1': 'res2', 'res2': 'res1', 'prot1':'prot2', 'prot2':'prot1',}):
     df_ = df.copy()
     df_.rename(columns=columns, inplace=True)
     df_ = pd.concat([df, df_])
