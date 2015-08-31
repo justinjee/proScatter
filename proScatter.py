@@ -20,15 +20,14 @@ import math
 import splotch
 import argparse
 import numpy as np
+import pandas as pd
+import os
 from bokeh.plotting import figure
 from bokeh.io import gridplot, output_file, show
 from bokeh.models import Range1d
 
 class ProScatter(object):
 
-    color = ['blue','red','green']
-    marker = ['o','o','o']
-    
     def __init__(self, **kwargs):
         super(ProScatter, self).__init__()
         output = kwargs.pop('output')
@@ -38,12 +37,18 @@ class ProScatter(object):
             self.output = output + '.html'
         for key,value in kwargs.iteritems():
             setattr(self, key, value)
-        self._df_sum = None
-        self._df_details = None
+        self._df_sum = pd.DataFrame()
+        self._df_details = pd.DataFrame()
         self._df_fasta = None
 
     def load_data(self):
-        self._df_details, self._df_sum = loadfiles.load_plink_html(self.plink)
+        for folder in self.plink:
+            for htmlfile in os.listdir(folder):
+                df_details, df_sum = loadfiles.load_plink_html(folder+'/'+htmlfile, folder)
+                self._df_details = pd.concat([self._df_details, df_details])
+                self._df_details.reset_index(drop=True, inplace=True)
+                self._df_sum = pd.concat([self._df_sum, df_sum])
+                self._df_sum.reset_index(drop=True, inplace=True)
         self._df_fasta = loadfiles.load_aa_positions(self.fasta_file, self.aminoacids)
 
     def print_summary(self):
@@ -53,10 +58,12 @@ class ProScatter(object):
             print("{} interactions".format(group.shape[0]))
 
     def build_plot(self):
-        numprot = len(set(self._df_sum['prot1']))
+
+        prot_list = set(self._df_sum['prot1'])
+        sorted_prot_list = sorted(prot_list.intersection(self._df_fasta['prot']))
+
+        numprot = len(sorted_prot_list)
         rows = [[None for r in range(numprot+1)] for s in range(numprot)]
-        sorted_prot_list = sorted(set(self._df_sum['prot1']))
-        print(sorted_prot_list)
         xr = Range1d(0,self._df_sum['res1'].max())
         yr = Range1d(0,self._df_sum['res2'].max())
         i=numprot-1
@@ -84,7 +91,7 @@ if __name__ == "__main__":
     '''
     )
     parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
-    parser.add_argument('plink', type=str, help='pLink output .html file')
+    parser.add_argument('-p', '--plink', nargs='+', type=str, help='pLink output .html file')
     parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
     parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
                         type=str)

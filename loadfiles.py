@@ -34,7 +34,7 @@ def sym_df(df, columns={'res1': 'res2', 'res2': 'res1', 'prot1':'prot2', 'prot2'
     return df_
 
 
-def load_plink_html(filename):
+def load_plink_html(filename, explabel=None):
     tp = parse.PLinkParser()
     with open(filename, 'r') as fi:
         for line in fi:
@@ -44,8 +44,8 @@ def load_plink_html(filename):
         def extract_xl_coord(rec):
             m = RE.search(rec[xl_field])
             return pd.Series([
-                m.group('segid1'), int(m.group('resid1')), m.group('segid2'), int(m.group('resid2'))
-                ], index=['prot1', 'res1', 'prot2', 'res2'])
+                m.group('segid1'), int(m.group('resid1')), m.group('segid2'), int(m.group('resid2')), explabel
+                ], index=['prot1', 'res1', 'prot2', 'res2', 'label'])
 
         return df.merge(df.apply(extract_xl_coord, axis=1), left_index=True, right_index=True)
     
