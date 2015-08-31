@@ -17,7 +17,7 @@ def extract_version():
 def get_package_data():
     baseline_images = [
         'tests/baseline_images/%s/*' % x
-        for x in os.listdir('proscatter/tests/baseline_images')]
+        for x in os.listdir('tests/baseline_images')]
 
     return {
         'proscatter':
