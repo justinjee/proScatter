@@ -3,32 +3,37 @@ import math
 from bokeh.plotting import * 
 from bokeh.models import HoverTool, BoxZoomTool, ResetTool, PanTool, WheelZoomTool 
 
+#TOOLS="hover,pan,wheel_zoom,box_zoom,reset,save"
 MINSIZE=200
 MAXSIZE=800
-POINTSIZE=10
-def splotch_df(df, prot1, prot2, xr, yr, x_on=True, y_on=True):
 
-    hover = HoverTool(
-        tooltips="""
-        <div>
-            <span style="font-size: 12px">("""+prot1+""" @x, """+prot2+""" @y)</span>
-        </div>
-        """
-    )
+def splotch_df(df, basesize=50):
+    TOOLS = "resize,crosshair,pan,wheel_zoom,box_zoom,reset,previewsave"
+    rows = []
+    row = []
+    num_prot = len(set(df['prot1']))
+    grouped = df.groupby(['prot1', 'prot2'])
 
-    TOOLS=[hover, BoxZoomTool(), ResetTool(), PanTool(), WheelZoomTool()]
+    for i, (key,group) in enumerate(grouped):
+        fig = figure(tools=TOOLS, width=250, height=250, title=None, min_border=10)
+        scatter = fig.scatter(group['res2'], group['res1'],
+                    size=np.sqrt(basesize / num_prot * group['SpecNum']),
+                    alpha=0.25)
+        fig.xaxis.axis_label = key[1]
+        fig.yaxis.axis_label = key[0]
+        fig.xaxis.visible = False
+        fig.yaxis.visible = False
+        fig.xaxis.major_label_orientation = math.pi / 4
+        row.append(fig)
+        if (i + 1) % num_prot == 0:
+            fig.yaxis.visible = True
+            rows.append(row[::-1])
+            row = []
 
-    fig = figure(tools=TOOLS, width=250, height=250, x_range=xr, y_range=yr, title=None, min_border=10)
-    scatter = fig.scatter(df['res1'], df['res2'],
-                size=np.sqrt(POINTSIZE * df['SpecNum']),
-                alpha=0.25)
-    fig.xaxis.axis_label = prot1
-    fig.yaxis.axis_label = prot2
-    fig.xaxis.visible = x_on 
-    fig.yaxis.visible = y_on
-    fig.xaxis.major_label_orientation = math.pi / 4
+    for fig in rows[-1]:
+        fig.xaxis.visible = True
 
-    return fig
+    return gridplot(rows)
 
 def makelegend(f, nprot, c, m, l):
     '''
