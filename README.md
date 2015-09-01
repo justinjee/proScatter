@@ -28,10 +28,6 @@ The outputs include:
 
 ##Features
 
-proScatter enables multiple features, for example:
-
-`python proScatter.py test.fasta K test.html --scale --zoom=Prot1-Prot2 --evalue=0.001`
-
 Details are given below:
 
 *--scale*
