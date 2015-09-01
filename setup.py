@@ -47,7 +47,6 @@ setup(
                       "pandas >= 0.16.0",
                       "numpy"],
     classifiers=['Intended Audience :: Science/Research',
-                 'Intended Audience :: Biochemistry/mass-spectrometry',
                  'Programming Language :: Python',
                  'Topic :: Data Visualization',
                  'Topic :: Scientific/Engineering',

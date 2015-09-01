@@ -54,27 +54,3 @@ Zooms in on only one subplot (Prot1 vs Prot2). As an added feature, clicking on 
 
 Considers only links with a score below a certain number #. Scores are expected to be in the 5th column
 
-```
-     usage: proScatter.py [-h] [-a AMINOACIDS] [-z ZOOM] [-s] [-e EVALUE] [-u]
-                          [-o OUTPUT] [-v]
-                          fasta_file plink
-     
-     positional arguments:
-       fasta_file            fasta file with protein sequences
-       plink                 pLink output .html file
-     
-     optional arguments:
-       -h, --help            show this help message and exit
-       -a AMINOACIDS, --aminoacids AMINOACIDS
-                             cross-linkable aminoacids. Defaults to Lysine (K).
-       -z ZOOM, --zoom ZOOM  Prot1-Prot2 only display subplot for proteins Prot1 vs
-                             Prot2
-       -s, --scale           scale both plot and outputs so that only amino acids
-                             of interest are considered
-       -e EVALUE, --evalue EVALUE
-                             e-value cutoff
-       -u, --unjoin          unjoin plot axes
-       -o OUTPUT, --output OUTPUT
-                             output file (HTML) name
-       -v, --verbose         increase output verbosity
-```
