@@ -64,14 +64,17 @@ class ProScatter(object):
 
         numprot = len(sorted_prot_list)
         rows = [[None for r in range(numprot+1)] for s in range(numprot)]
-        xr = Range1d(0,self._df_sum['res1'].max())
-        yr = Range1d(0,self._df_sum['res2'].max())
+        rows[0][-1]=splotch.makelegend(self._df_sum)
+        (xr, yr) = (Range1d(0,self._df_sum['res1'].max()), Range1d(0,self._df_sum['res2'].max()))
         i=numprot-1
         for prot2 in sorted_prot_list:
             j=0
             for prot1 in sorted_prot_list:
                 subdf = self._df_sum[(self._df_sum['prot1']==prot1) & (self._df_sum['prot2']==prot2)]
-                rows[i][j] = splotch.splotch_df(subdf, prot1, prot2, xr, yr, i==numprot-1, j==0)
+                if self.unjoin:
+                    (xr, yr) = ((0,self._df_fasta[self._df_fasta['prot']==prot1]['pos'].max()), 
+                                (0,self._df_fasta[self._df_fasta['prot']==prot2]['pos'].max()))
+                rows[i][j] = splotch.splotch_df(subdf, prot1, prot2, xr, yr, numprot, i==numprot-1, j==0)
                 j+=1
             i-=1
 
