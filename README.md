@@ -15,17 +15,16 @@ To download, either download all 3 .py files into the same directory, or downloa
 The inputs to proScatter include:
 
 1.   A fasta file including the amino acid sequences of all the proteins under consideration.
-2.   A list of amino acids of interest (ex: K or CM)
-3.   pLink output in `.html` format
+2.   pLink output in `.html` format
+
+*Example*
+
+`python proScatter.py testfasta.fasta -p proScaTest/`
 
 The outputs include:
 
 1.   A summary file (.txt) containing the list of all links and their frequencies
 2.   A scatter plot
-
-*Example*
-
-`./proScatter.py examples/test.fasta examples/IdProTable_combine.html`
 
 ##Features
 
