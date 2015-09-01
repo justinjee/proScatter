@@ -89,7 +89,7 @@ class ProScatter(object):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='''
     ProScatter
-    Interaction visualizer for pLink XLMS data, by Justin Jee (with design by Katelyn McGary Shipper)
+    Interaction visualizer for pLink XLMS data, by Justin Jee, Katelyn McGary Shipper, and Ilya Shamovsky
 
     '''
     )
