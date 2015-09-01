@@ -15,11 +15,8 @@ To download, either download all 3 .py files into the same directory, or downloa
 The inputs to proScatter include:
 
 1.   A fasta file including the amino acid sequences of all the proteins under consideration.
-2.   pLink output in `.html` format
-
-*Example*
-
-`python proScatter.py testfasta.fasta -p proScaTest/`
+2.   A list of amino acids of interest (ex: K or CM)
+3.   pLink output in `.html` format
 
 The outputs include:
 
@@ -56,29 +53,4 @@ Zooms in on only one subplot (Prot1 vs Prot2). As an added feature, clicking on 
 *--evalue=#*
 
 Considers only links with a score below a certain number #. Scores are expected to be in the 5th column
-
-```
-     usage: proScatter.py [-h] [-a AMINOACIDS] [-z ZOOM] [-s] [-e EVALUE] [-u]
-                          [-o OUTPUT] [-v]
-                          fasta_file plink
-     
-     positional arguments:
-       fasta_file            fasta file with protein sequences
-       plink                 pLink output .html file
-     
-     optional arguments:
-       -h, --help            show this help message and exit
-       -a AMINOACIDS, --aminoacids AMINOACIDS
-                             cross-linkable aminoacids. Defaults to Lysine (K).
-       -z ZOOM, --zoom ZOOM  Prot1-Prot2 only display subplot for proteins Prot1 vs
-                             Prot2
-       -s, --scale           scale both plot and outputs so that only amino acids
-                             of interest are considered
-       -e EVALUE, --evalue EVALUE
-                             e-value cutoff
-       -u, --unjoin          unjoin plot axes
-       -o OUTPUT, --output OUTPUT
-                             output file (HTML) name
-       -v, --verbose         increase output verbosity
-```
 
