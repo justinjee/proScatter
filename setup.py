@@ -46,6 +46,11 @@ setup(
     install_requires=["bokeh",
                       "pandas >= 0.16.0",
                       "numpy"],
+    entry_points={
+        'console_scripts': [
+            'proscatter=proScatter:main',
+            ],
+        },
     classifiers=['Intended Audience :: Science/Research',
                  'Programming Language :: Python',
                  'Topic :: Scientific/Engineering :: Bio-Informatics',
