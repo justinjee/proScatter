@@ -94,7 +94,7 @@ if __name__ == "__main__":
     '''
     )
     parser.add_argument('fasta_file', type=str, help='fasta file with protein sequences')
-    parser.add_argument('-p', '--plink', nargs='+', type=str, help='pLink output .html file')
+    parser.add_argument('plink', nargs='+', type=str, help='pLink output .html file')
     parser.add_argument('-a', '--aminoacids', default='K', help='cross-linkable aminoacids. Defaults to Lysine (K).')
     parser.add_argument('-z', '--zoom', help='Prot1-Prot2 only display subplot for proteins Prot1 vs Prot2',
                         type=str)
