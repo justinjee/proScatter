@@ -86,7 +86,7 @@ class ProScatter(object):
             output_file(self.output)
             show(self.proscatter)
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description='''
     ProScatter
     Interaction visualizer for pLink XLMS data, by Justin Jee (with design by Katelyn McGary Shipper)
@@ -111,3 +111,6 @@ if __name__ == "__main__":
     proscatter.print_summary()
     proscatter.build_plot()
     proscatter.show_scatter() 
+
+if __name__ == "__main__":
+    main()
