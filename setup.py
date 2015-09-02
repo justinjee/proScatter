@@ -48,7 +48,7 @@ setup(
                       "numpy"],
     entry_points={
         'console_scripts': [
-            'proscatter=proScatter:main',
+            'proscatter=proscatter.proScatter:main',
             ],
         },
     classifiers=['Intended Audience :: Science/Research',
